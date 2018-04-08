@@ -11,8 +11,6 @@
 #include <vtk-8.1/vtkInformation.h>
 #include <vtk-8.1/vtkInformationVector.h>
 #include <vtk-8.1/vtkObjectFactory.h>
-#include <vtk-8.1/vtkUnstructuredGrid.h>
-#include "vtk-8.1/vtkPolyVertex.h"
 //libLAS Includes
 #include <liblas/liblas.hpp>
 

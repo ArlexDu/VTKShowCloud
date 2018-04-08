@@ -5,6 +5,7 @@
 #include <vtk-8.1/vtkRenderWindow.h>
 #include <vtk-8.1/vtkPolyDataMapper.h>
 #include "vtk-8.1/vtkInteractorStyleTrackballCamera.h"
+#include "vtk-8.1/vtkDataSetMapper.h"
 
 //Reader includes
 #include "vtkLASReader.h"
@@ -30,8 +31,8 @@ int TestLASLidar(int argc, char **argv) {
     reader->Update();
 
     vtkPolyData *outputData = reader->GetOutput();
-
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    printf("\n filter number is %d",outputData->GetNumberOfCells());
+    vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
     mapper->SetInputData(outputData);
     //设置点的颜色
     mapper->SetScalarModeToUsePointFieldData();

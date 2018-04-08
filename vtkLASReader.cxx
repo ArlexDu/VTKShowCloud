@@ -61,15 +61,16 @@ int vtkLASReader::RequestData(vtkInformation * vtkNotUsed(request),
     liblas::Reader reader = readerFactory.CreateWithStream(ifs);
     Header = new liblas::Header(reader.GetHeader());
     pointRecordsCount = Header->GetPointRecordsCount();
-//    printf("pointRecordCount is %d",pointRecordsCount);
+    printf("pointRecordCount is %d",pointRecordsCount);
     vtkPolyData *pointsPolyData = vtkPolyData::New();
     ReadPointRecordData(reader, pointsPolyData);
 
     // Convert points to verts in output polydata
-  vtkVertexGlyphFilter* vertexFilter = vtkVertexGlyphFilter::New();
-  vertexFilter->SetInputData(pointsPolyData);
-  vertexFilter->Update();
-  output->ShallowCopy(vertexFilter->GetOutput());
+    vtkVertexGlyphFilter *vertexFilter = vtkVertexGlyphFilter::New();
+    vertexFilter->SetInputData(pointsPolyData);
+    vertexFilter->Update();
+    printf("\n filter number is %d",vertexFilter->GetOutput()->GetNumberOfCells());
+    output->ShallowCopy(vertexFilter->GetOutput());
 
     return VTK_OK;
 }
@@ -103,9 +104,9 @@ void vtkLASReader::ReadPointRecordData(liblas::Reader &reader, vtkPolyData *poin
 
     for (int i = 0; i < pointRecordsCount && reader.ReadNextPoint(); i++) {
         liblas::Point const &p = reader.GetPoint();
-        points->InsertNextPoint(p.GetX() * Header->GetScaleX() * 2 + Header->GetOffsetX(),
-                                p.GetY() * Header->GetScaleY() * 2 + Header->GetOffsetY(),
-                                p.GetZ() * Header->GetScaleZ() * 2 + Header->GetOffsetZ());
+        points->InsertNextPoint(p.GetX(),//* Header->GetScaleX() * 2 + Header->GetOffsetX(),
+                                p.GetY(),// * Header->GetScaleY() * 2 + Header->GetOffsetY(),
+                                p.GetZ());// * Header->GetScaleZ() * 2 + Header->GetOffsetZ());
 
         unsigned char *color;
         switch (VisualisationType) {
@@ -133,8 +134,6 @@ void vtkLASReader::ReadPointRecordData(liblas::Reader &reader, vtkPolyData *poin
     }
 
     pointsPolyData->SetPoints(points);
-
-    vtkSmartPointer<vtkPolyVertex> polyvertex = vtkSmartPointer<vtkPolyVertex>::New();
     pointsPolyData->GetPointData()->AddArray(colors);
 }
 
