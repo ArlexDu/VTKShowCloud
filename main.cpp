@@ -12,7 +12,6 @@
 #include "vtk-8.1/vtkUnsignedCharArray.h"
 #include "vtk-8.1/vtkPointData.h"
 
-
 int main()
 {
 
@@ -59,6 +58,10 @@ int main()
     {
         polyvertex->GetPointIds()->SetId(i,i);
     }
+//    vtkSmartPointer<vtkVertexGlyphFilter> vertexFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
+//    vertexFilter->SetInputData(pointsPolyData);
+//    vertexFilter->Update();
+//    output->ShallowCopy(vertexFilter->GetOutput());
 
     //
     vtkSmartPointer<vtkUnstructuredGrid> grid=vtkSmartPointer<vtkUnstructuredGrid>::New();

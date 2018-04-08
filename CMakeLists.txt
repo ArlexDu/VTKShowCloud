@@ -4,7 +4,7 @@ project(VTKShowCloud)
 set(CMAKE_CXX_STANDARD 11)
 
 # set source files
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES testlas.cpp vtkLASReader.h vtkLASReader.cxx)
 set(GDAL_LIBRARY ${GDAL_LINK_DIRECTORIES}/lib${GDAL_LIB_NAME}.dylib CACHE STRING INTERNAL)
 
 #PCL config
