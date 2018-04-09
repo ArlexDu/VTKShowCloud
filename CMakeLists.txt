@@ -35,22 +35,22 @@ include_directories(
 )
 
 # Set your files and resources here
-set(Srcs main.cxx SimpleView.cxx)
+set(Srcs main.cpp mainwindow.cpp)
 
-set(Hdrs SimpleView.h)
+set(Hdrs mainwindow.h)
 
-set(MOC_Hdrs SimpleView.h)
+set(MOC_Hdrs mainwindow.h)
 
-set(UIs SimpleView.ui)
+set(UIs mainwindow.ui)
 
-set(QRCs Icons/icons.qrc)
+set(QRCs Resources/resources.qrc)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
 # The rest should just work (sure...)
 # We have ui files, this will bring in the macro: qt5_wrap_ui
-find_package(Qt5 COMPONENTS Widgets REQUIRED QUIET)
+find_package(Qt5 COMPONENTS Core Gui Widgets Charts REQUIRED QUIET)
 qt5_wrap_ui(UI_Srcs ${UIs})
 qt5_add_resources(QRC_Srcs ${QRCs})
 
@@ -69,6 +69,6 @@ source_group("Generated" FILES
 #Add Executable
 add_executable(VTKShowCloud MACOSX_BUNDLE ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 
-qt5_use_modules(VTKShowCloud Core Gui Widgets)
+qt5_use_modules(VTKShowCloud Core Gui Widgets Charts)
 
 target_link_libraries(VTKShowCloud ${PCL_LIBRARIES} ${libLAS_LIBRARIES} ${VTK_LIBRARIES})
