@@ -8,7 +8,7 @@
 #include "vtk-8.1/vtkDataSetMapper.h"
 
 //Reader includes
-#include "vtkLASReader.h"
+#include "vtkDataReader.h"
 
 int TestGeoJSON(int argc, char **argv);
 

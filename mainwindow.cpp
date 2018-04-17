@@ -160,7 +160,7 @@ void MainWindow::openLas() {
 //    选择文件
     QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
     std::string filepath = path.toLocal8Bit().constData();
-    vtkSmartPointer<vtkLASReader> reader = vtkSmartPointer<vtkLASReader>::New();
+    vtkSmartPointer<vtkDataReader> reader = vtkSmartPointer<vtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
     reader->Update();
     vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();

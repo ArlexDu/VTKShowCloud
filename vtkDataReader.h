@@ -18,17 +18,21 @@
 //libLAS Includes
 #include <liblas/liblas.hpp>
 
+//PCL Includes
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+
 // C++ includes
 #include <fstream>
 #include <iostream>
 
-class vtkLASReader : public vtkUnstructuredGridAlgorithm {
+class vtkDataReader : public vtkUnstructuredGridAlgorithm {
 
 public:
 
-vtkTypeMacro(vtkLASReader, vtkUnstructuredGridAlgorithm)
+vtkTypeMacro(vtkDataReader, vtkUnstructuredGridAlgorithm)
 
-    static vtkLASReader *New();
+    static vtkDataReader *New();
 
     void PrintSelf(ostream &os, vtkIndent indent) override;
 
@@ -42,24 +46,29 @@ vtkTypeMacro(vtkLASReader, vtkUnstructuredGridAlgorithm)
 
 
 protected:
-    vtkLASReader();
+    vtkDataReader();
 
-    virtual ~vtkLASReader();
+    virtual ~vtkDataReader();
 
 //  Filter主要执行函数
     int RequestData(vtkInformation *request, vtkInformationVector **inputVector,
                     vtkInformationVector *outputVector) override;
 
 //  读取LAS文件函数
-    void ReadPointRecordData(liblas::Reader &reader, vtkUnstructuredGrid *unstructuredGrid);
+    void ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ> &cloud, vtkUnstructuredGrid *unstructuredGrid);
 
     int pointRecordsCount;
     liblas::Header *Header;
     char *FileName;
 
 private:
-    vtkLASReader(const vtkLASReader &);  // Not implemented
-    void operator=(const vtkLASReader &);    // Not implemented
+    vtkDataReader(const vtkDataReader &);  // Not implemented
+    void operator=(const vtkDataReader &);    // Not implemented
+    //  las文件转化为pcd格式
+    void Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ> &cloud);
+
+//  数据处理
+    void statisticalOutlierRemove(pcl::PointCloud<pcl::PointXYZ> &cloud);
 };
 
 #endif // __vtkLASReader_h

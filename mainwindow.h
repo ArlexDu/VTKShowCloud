@@ -33,7 +33,7 @@
 
 #include "ui_mainwindow.h"
 #include "HS_Lidar.h"
-#include "vtkLASReader.h"
+#include "vtkDataReader.h"
 
 namespace Ui {
     class MainWindow;
