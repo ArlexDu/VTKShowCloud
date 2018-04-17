@@ -28,9 +28,13 @@
 #include "vtkPointData.h"
 #include "vtkVertexGlyphFilter.h"
 #include <liblas/liblas.hpp>
+#include <QtCharts/QLineSeries>
+#include <QValueAxis>
+#include "HS_Lidar.h"
+#include <QFileDialog.h>
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 // Forward Qt class declarations
@@ -45,7 +49,8 @@ public:
     ~MainWindow() override;
 
 private slots:
-    virtual void slotExit();
+    void slotExit();
+    void openLas();
 
 private:
     Ui_MainWindow *ui;

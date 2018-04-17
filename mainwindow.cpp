@@ -1,13 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-#include "QValueAxis"
-#include <iostream>
-#include <string>
-#include "HS_Lidar.h"
-
 using namespace std;
 
 QT_CHARTS_USE_NAMESPACE
@@ -45,73 +38,8 @@ void moveToOffset(int offset, FILE *fp) {
 MainWindow::MainWindow() {
     this->ui = new Ui_MainWindow;
     this->ui->setupUi(this);
-
-    //VTK显示点云
-
-    // Geometry
-    unsigned int red[3] = {255,0,0};
-    unsigned int green[3] = {0,255,0};
-    unsigned int blue[3] = {0,0,255};
-    //数据的导入
-    std::ifstream ifs;
-    ifs.open("/Users/arlex/Downloads/111.las",std::ios::in|std::ios::binary);
-    liblas::ReaderFactory f;
-    liblas::Reader reader = f.CreateWithStream(ifs);
-    double arr[3];
-    //空间结构的处理
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    //颜色值
-    vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
-    colors->SetNumberOfComponents(3);
-    colors->SetName("Colors");
-    int n=0;
-    while(reader.ReadNextPoint()){
-        liblas::Point const& p = reader.GetPoint();
-        arr[0] = p.GetX();
-        arr[1] = p.GetY();
-        arr[2] = p.GetZ();
-        points->InsertPoint(n,arr[0],arr[1],arr[2]);
-        if(arr[2]<17){
-            colors->InsertNextTuple3(blue[0],blue[1],blue[2]);
-        }else{
-            colors->InsertNextTuple3(green[0],green[1],green[2]);
-        }
-//        colors->InsertNextTuple3(red[0],red[1],red[2]);
-        n++;
-    }
-//    printf("%d\n", n);
-
-    //组织结构/拓扑结构的处理
-    vtkSmartPointer<vtkPolyData> grid=vtkSmartPointer<vtkPolyData>::New();
-    grid->SetPoints(points);
-    grid->GetPointData()->AddArray(colors);
-    vtkSmartPointer<vtkVertexGlyphFilter> vertexFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
-    vertexFilter->SetInputData(grid);
-    vertexFilter->Update();
-    vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
-//  printf("\n filter number is %d",vertexFilter->GetOutput()->GetNumberOfCells());
-    mapper->SetInputData(vertexFilter->GetOutput());
-    //设置点的颜色
-    mapper->SetScalarModeToUsePointFieldData();
-    mapper->SelectColorArray("Colors");
-
-    // Actor in scene
-    vtkNew<vtkActor> actor;
-    actor->SetMapper(mapper);
-
-    // VTK Renderer
-    vtkNew<vtkRenderer> ren;
-
-    // Add Actor to renderer
-    ren->AddActor(actor);
-
-    // VTK/Qt wedded
-    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-    this->ui->Map->SetRenderWindow(renderWindow);
-    this->ui->Map->GetRenderWindow()->AddRenderer(ren);
-
+    connect(ui->actionOpen,SIGNAL(triggered()), this, SLOT(openLas()));
     //显示二维波形图部分
-
     char filename[500] = "/Users/arlex/Downloads/ocean_2017_12_24_15_43_24~2017_12_24_16_10_08.bin";
     FILE *fp;
     fp = fopen(filename, "rb+");
@@ -217,6 +145,7 @@ MainWindow::MainWindow() {
     chart3D->setAxisY(axisY, lines3);
     chart3D->setAxisX(axisX, lines4);
     chart3D->setAxisY(axisY, lines4);
+
 }
 
 MainWindow::~MainWindow() {
@@ -226,4 +155,73 @@ MainWindow::~MainWindow() {
 void MainWindow::slotExit() {
     qApp->exit();
 }
+
+//打开资源管理器选择文件
+void MainWindow::openLas() {
+//    选择文件
+    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
+//    path = "/Users/arlex/Downloads/111.las";
+    std::string filepath = path.toLocal8Bit().constData();
+    //VTK显示点云
+    unsigned int red[3] = {255, 0, 0};
+    unsigned int green[3] = {0, 255, 0};
+    unsigned int blue[3] = {0, 0, 255};
+    //数据的导入
+    std::ifstream ifs;
+    ifs.open(filepath, std::ios::in | std::ios::binary);
+    liblas::ReaderFactory f;
+    liblas::Reader reader = f.CreateWithStream(ifs);
+    double arr[3];
+    //空间结构的处理
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    //颜色值
+    vtkSmartPointer<vtkUnsignedCharArray> colors = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    colors->SetNumberOfComponents(3);
+    colors->SetName("Colors");
+    int n = 0;
+    while (reader.ReadNextPoint()) {
+        liblas::Point const &p = reader.GetPoint();
+        arr[0] = p.GetX();
+        arr[1] = p.GetY();
+        arr[2] = p.GetZ();
+        points->InsertPoint(n, arr[0], arr[1], arr[2]);
+        if (arr[2] < 17) {
+            colors->InsertNextTuple3(blue[0], blue[1], blue[2]);
+        } else {
+            colors->InsertNextTuple3(green[0], green[1], green[2]);
+        }
+//        colors->InsertNextTuple3(red[0],red[1],red[2]);
+        n++;
+    }
+//    printf("%d\n", n);
+
+    //组织结构/拓扑结构的处理
+    vtkSmartPointer<vtkPolyData> grid = vtkSmartPointer<vtkPolyData>::New();
+    grid->SetPoints(points);
+    grid->GetPointData()->AddArray(colors);
+    vtkSmartPointer<vtkVertexGlyphFilter> vertexFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
+    vertexFilter->SetInputData(grid);
+    vertexFilter->Update();
+    vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
+//  printf("\n filter number is %d",vertexFilter->GetOutput()->GetNumberOfCells());
+    mapper->SetInputData(vertexFilter->GetOutput());
+    //设置点的颜色
+    mapper->SetScalarModeToUsePointFieldData();
+    mapper->SelectColorArray("Colors");
+
+    // Actor in scene
+    vtkNew<vtkActor> actor;
+    actor->SetMapper(mapper);
+
+    // VTK Renderer
+    vtkNew<vtkRenderer> ren;
+
+    // Add Actor to renderer
+    ren->AddActor(actor);
+
+    // VTK/Qt wedded
+    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+    this->ui->Map->SetRenderWindow(renderWindow);
+    this->ui->Map->GetRenderWindow()->AddRenderer(ren);
+};
 

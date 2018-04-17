@@ -67,7 +67,8 @@ source_group("Generated" FILES
         )
 
 #Add Executable
-add_executable(VTKShowCloud MACOSX_BUNDLE ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
+add_executable(VTKShowCloud ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
+#add_executable(VTKShowCloud MACOSX_BUNDLE ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 
 qt5_use_modules(VTKShowCloud Core Gui Widgets Charts)
 
