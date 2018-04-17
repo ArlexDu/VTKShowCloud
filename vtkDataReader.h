@@ -15,12 +15,14 @@
 #include <vtk-8.1/vtkObjectFactory.h>
 #include <vtk-8.1/vtkPolyVertex.h>
 
+
 //libLAS Includes
 #include <liblas/liblas.hpp>
 
 //PCL Includes
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
+#include <pcl/filters/radius_outlier_removal.h>
 
 // C++ includes
 #include <fstream>
@@ -55,7 +57,7 @@ protected:
                     vtkInformationVector *outputVector) override;
 
 //  读取LAS文件函数
-    void ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ> &cloud, vtkUnstructuredGrid *unstructuredGrid);
+    void ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, vtkUnstructuredGrid *unstructuredGrid);
 
     int pointRecordsCount;
     liblas::Header *Header;
@@ -64,11 +66,11 @@ protected:
 private:
     vtkDataReader(const vtkDataReader &);  // Not implemented
     void operator=(const vtkDataReader &);    // Not implemented
-    //  las文件转化为pcd格式
-    void Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ> &cloud);
+//  las文件转化为pcd格式
+    void Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
 //  数据处理
-    void statisticalOutlierRemove(pcl::PointCloud<pcl::PointXYZ> &cloud);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr RadiusOutlierRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 };
 
 #endif // __vtkLASReader_h

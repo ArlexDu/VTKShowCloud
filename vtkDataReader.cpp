@@ -39,15 +39,13 @@ int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
     // Read header data
     liblas::ReaderFactory readerFactory;
     liblas::Reader reader = readerFactory.CreateWithStream(ifs);
-    pcl::PointCloud<pcl::PointXYZ> cloud;
+    const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 //    las转化为pcd格式
     Las2Pcd(reader, cloud);
 //  精简点云与去噪
-    statisticalOutlierRemove(cloud);
-//    printf("pointRecordCount is %d \n", pointRecordsCount);
-    printf("cloud width is %d \n", cloud.width);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr filter_cloud = RadiusOutlierRemove(cloud);
     vtkUnstructuredGrid *grid = vtkUnstructuredGrid::New();
-    ReadPointRecordData(cloud, grid);
+    ReadPointRecordData(filter_cloud, grid);
     printf("grid number is %d \n", grid->GetNumberOfPoints());
     printf("grid cell is %d \n", grid->GetNumberOfCells());
     output->ShallowCopy(grid);
@@ -56,7 +54,7 @@ int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
     return VTK_OK;
 }
 
-void vtkDataReader::ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ> &cloud, vtkUnstructuredGrid *grid) {
+void vtkDataReader::ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, vtkUnstructuredGrid *grid) {
     unsigned int red[3] = {255, 0, 0};
     unsigned int green[3] = {0, 255, 0};
     unsigned int blue[3] = {0, 0, 255};
@@ -66,9 +64,9 @@ void vtkDataReader::ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ> &cloud, v
     colors->SetNumberOfComponents(3);
     vtkSmartPointer<vtkPolyVertex> vertex = vtkSmartPointer<vtkPolyVertex>::New();
     vertex->GetPointIds()->SetNumberOfIds(pointRecordsCount);
-    for (int i = 0; i < cloud.width; i++) {
-        points->InsertNextPoint(cloud.points[i].x, cloud.points[i].y, cloud.points[i].z);
-        if (cloud.points[i].z < 17) {
+    for (int i = 0; i < cloud->width; i++) {
+        points->InsertNextPoint(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
+        if (cloud->points[i].z < 17) {
             colors->InsertNextTuple3(blue[0], blue[1], blue[2]);
         } else {
             colors->InsertNextTuple3(green[0], green[1], green[2]);
@@ -86,23 +84,31 @@ void vtkDataReader::PrintSelf(ostream &os, vtkIndent indent) {
     os << "Filename: " << this->FileName << std::endl;
 }
 
-void vtkDataReader::Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ> &cloud) {
+void vtkDataReader::Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     Header = new liblas::Header(reader.GetHeader());
     pointRecordsCount = Header->GetPointRecordsCount();
-    cloud.width = pointRecordsCount;
-    cloud.height = 1;
-    cloud.is_dense = false;
-    cloud.points.resize(cloud.width * cloud.height);
+    cloud->width = pointRecordsCount;
+    cloud->height = 1;
+    cloud->is_dense = false;
+    cloud->points.resize(cloud->width * cloud->height);
     int i = 0;
     while (reader.ReadNextPoint()) {
         liblas::Point const &p = reader.GetPoint();
-        cloud.points[i].x = p.GetX();
-        cloud.points[i].y = p.GetY();
-        cloud.points[i].z = p.GetZ();
+        cloud->points[i].x = p.GetX();
+        cloud->points[i].y = p.GetY();
+        cloud->points[i].z = p.GetZ();
         i++;
     }
 }
 
-void vtkDataReader::statisticalOutlierRemove(pcl::PointCloud<pcl::PointXYZ> &cloud){
-
+pcl::PointCloud<pcl::PointXYZ>::Ptr vtkDataReader::RadiusOutlierRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    pcl::RadiusOutlierRemoval<pcl::PointXYZ> sor;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr filter_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    printf("cloud width is %d \n", cloud->width);
+    sor.setInputCloud(cloud);
+    sor.setRadiusSearch(3);
+    sor.setMinNeighborsInRadius (3);
+    sor.filter (*filter_cloud);
+    printf("filter cloud width is %d \n", filter_cloud->width);
+    return filter_cloud;
 }
