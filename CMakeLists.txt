@@ -35,9 +35,9 @@ include_directories(
 )
 
 # Set your files and resources here
-set(Srcs main.cpp mainwindow.cpp HS_Lidar.cpp)
+set(Srcs main.cpp mainwindow.cpp HS_Lidar.cpp vtkLASReader.cpp)
 
-set(Hdrs mainwindow.h HS_Lidar_Header.h HS_Lidar_Channel.h HS_Lidar.h)
+set(Hdrs mainwindow.h HS_Lidar_Header.h HS_Lidar_Channel.h HS_Lidar.h vtkLASReader.h)
 
 set(MOC_Hdrs mainwindow.h)
 
