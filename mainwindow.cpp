@@ -4,6 +4,7 @@ using namespace std;
 
 QT_CHARTS_USE_NAMESPACE
 
+
 bool isHeaderRight(uint8_t header[8]) {
 
     uint8_t headerSign[] = {1, 35, 69, 103, 137, 171, 205, 239};
@@ -158,8 +159,9 @@ void MainWindow::slotExit() {
 //打开资源管理器选择文件
 void MainWindow::openLas() {
 //    选择文件
-    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
-    std::string filepath = path.toLocal8Bit().constData();
+//    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
+//    std::string filepath = path.toLocal8Bit().constData();
+    string filepath = "/Users/arlex/Downloads/111.las";
     vtkSmartPointer<vtkDataReader> reader = vtkSmartPointer<vtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
     reader->Update();
@@ -182,7 +184,28 @@ void MainWindow::openLas() {
 
     // VTK/Qt wedded
     vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+//    增加交互
+    vtkSmartPointer<vtkPointPicker> pointPicker = vtkSmartPointer<vtkPointPicker>::New();
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    renderWindowInteractor->SetPicker(pointPicker);
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+    vtkSmartPointer<PointPickerInteractorStyle> style = vtkSmartPointer<PointPickerInteractorStyle>::New();
+    renderWindowInteractor->SetInteractorStyle(style);
+
+//    设置方位轴
+    vtkSmartPointer<vtkAxesActor> Axes = vtkSmartPointer<vtkAxesActor>::New();
+    vtkSmartPointer<vtkOrientationMarkerWidget> widget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+    widget->SetInteractor(renderWindowInteractor);
+    widget->SetOrientationMarker(Axes);
+    widget->SetOutlineColor(1,1,1);
+    widget->SetViewport(0,0,0.2,0.2);
+    widget->SetEnabled(1);
+    widget->InteractiveOn();
+
+    renderWindow->Render();
+    renderWindowInteractor->Start();
+    renderWindow->AddRenderer(ren);
     this->ui->Map->SetRenderWindow(renderWindow);
-    this->ui->Map->GetRenderWindow()->AddRenderer(ren);
+//    this->ui->Map->GetRenderWindow()->AddRenderer(ren);
 };
 

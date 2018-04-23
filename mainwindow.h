@@ -30,10 +30,13 @@
 #include <QtCharts/QLineSeries>
 #include <QValueAxis>
 #include <QFileDialog.h>
+#include <vtkAxesActor.h>
+#include <vtkOrientationMarkerWidget.h>
 
 #include "ui_mainwindow.h"
 #include "HS_Lidar.h"
 #include "vtkDataReader.h"
+#include "PointPickerInteractorStyle.h"
 
 namespace Ui {
     class MainWindow;

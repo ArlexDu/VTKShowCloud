@@ -1,6 +1,6 @@
 #include "vtkDataReader.h"
 
-vtkStandardNewMacro(vtkDataReader)
+vtkStandardNewMacro(vtkDataReader);
 
 vtkDataReader::vtkDataReader() {
     this->FileName = NULL;
@@ -63,7 +63,7 @@ void vtkDataReader::ReadPointRecordData(pcl::PointCloud<pcl::PointXYZ>::Ptr clou
     colors->SetName("Colors");
     colors->SetNumberOfComponents(3);
     vtkSmartPointer<vtkPolyVertex> vertex = vtkSmartPointer<vtkPolyVertex>::New();
-    vertex->GetPointIds()->SetNumberOfIds(pointRecordsCount);
+    vertex->GetPointIds()->SetNumberOfIds(cloud->width);
     for (int i = 0; i < cloud->width; i++) {
         points->InsertNextPoint(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
         if (cloud->points[i].z < 17) {
