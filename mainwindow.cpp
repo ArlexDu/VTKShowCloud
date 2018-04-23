@@ -8,7 +8,7 @@ QT_CHARTS_USE_NAMESPACE
 MainWindow::MainWindow() {
     this->ui = new Ui_MainWindow;
     this->ui->setupUi(this);
-    connect(ui->actionOpen,SIGNAL(triggered()), this, SLOT(openLas()));
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openLas()));
 
     //显示二维波形图部分
     chart = new Chart();
@@ -34,8 +34,9 @@ void MainWindow::openLas() {
     vtkSmartPointer<vtkDataReader> reader = vtkSmartPointer<vtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
     reader->Update();
+
     vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
-//  printf("\n filter number is %d",vertexFilter->GetOutput()->GetNumberOfCells());
+
     mapper->SetInputData(reader->GetOutput());
     //设置点的颜色
     mapper->SetScalarModeToUsePointFieldData();
@@ -50,32 +51,33 @@ void MainWindow::openLas() {
 
     // Add Actor to renderer
     ren->AddActor(actor);
+    ren->SetBackground(0,0,0);
 
     // VTK/Qt wedded
-    vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    ui->Map->SetRenderWindow(renderWindow);
+    ui->Map->GetRenderWindow()->AddRenderer(ren);
 //    增加交互
-//    vtkSmartPointer<vtkPointPicker> pointPicker = vtkSmartPointer<vtkPointPicker>::New();
-//    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-//    renderWindowInteractor->SetPicker(pointPicker);
-//    renderWindowInteractor->SetRenderWindow(renderWindow);
-//    vtkSmartPointer<PointPickerInteractorStyle> style = vtkSmartPointer<PointPickerInteractorStyle>::New();
-//    renderWindowInteractor->SetInteractorStyle(style);
-//
-////    设置方位轴
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+
+    vtkSmartPointer<PointPickerInteractorStyle> style = vtkSmartPointer<PointPickerInteractorStyle>::New();
+    renderWindowInteractor->SetInteractorStyle(style);
+
+//    设置方位轴
 //    vtkSmartPointer<vtkAxesActor> Axes = vtkSmartPointer<vtkAxesActor>::New();
 //    vtkSmartPointer<vtkOrientationMarkerWidget> widget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
 //    widget->SetInteractor(renderWindowInteractor);
 //    widget->SetOrientationMarker(Axes);
-//    widget->SetOutlineColor(1,1,1);
-//    widget->SetViewport(0,0,0.2,0.2);
+//    widget->SetOutlineColor(1, 1, 1);
+//    widget->SetViewport(0, 0, 0.2, 0.2);
 //    widget->SetEnabled(1);
 //    widget->InteractiveOn();
-//
-//    renderWindow->Render();
-//    renderWindowInteractor->Start();
-    renderWindow->AddRenderer(ren);
-    this->ui->Map->SetRenderWindow(renderWindow);
-//    this->ui->Map->GetRenderWindow()->AddRenderer(ren);
+
+    renderWindow->Render();
+    renderWindowInteractor->Start();
+
+    ui->Map->update();
 };
 
 void MainWindow::onDrawChanged(DrawData info) {
@@ -87,28 +89,23 @@ void MainWindow::onDrawChanged(DrawData info) {
 }
 
 
-
-
-void MainWindow::on_actionMoveRight_triggered()
-{
+void MainWindow::on_actionMoveRight_triggered() {
 //    qDebug()<< chart->filename;
 }
 
-void MainWindow::on_actionMoveLeft_triggered()
-{
+void MainWindow::on_actionMoveLeft_triggered() {
 
 }
 
-void MainWindow::on_actionOceanStart_triggered()
-{
+void MainWindow::on_actionOceanStart_triggered() {
 
-    if(chart->isPlay){
+    if (chart->isPlay) {
         drawChartThread->requestInterruption();
         QIcon icon;
         icon.addFile(tr(":/images/images/play.png"));
         ui->actionOceanStart->setIcon(icon);
 
-    }else{
+    } else {
         QIcon icon;
         icon.addFile(tr(":/images/images/pause.png"));
         ui->actionOceanStart->setIcon(icon);
@@ -127,17 +124,15 @@ void MainWindow::on_actionOceanStart_triggered()
 
 }
 
-void MainWindow::on_actionOpenOceanFile_triggered()
-{
+void MainWindow::on_actionOpenOceanFile_triggered() {
 
     QString fileName = QFileDialog::getOpenFileName(
             this, tr("open  file"),
             "./", tr("Ocean files(*.ocean);;All files (*.*)"));
 
-    if(fileName.isEmpty())
-    {
+    if (fileName.isEmpty()) {
         QMessageBox mesg;
-        mesg.warning(this,"警告","打开文件失败!");
+        mesg.warning(this, "警告", "打开文件失败!");
         return;
     }
     chart->filename = fileName;

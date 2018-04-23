@@ -13,6 +13,9 @@ public:
 vtkTypeMacro(PointPickerInteractorStyle, vtkInteractorStyleTrackballCamera);
 
     static PointPickerInteractorStyle *New();
+    void OnLeftButtonDown() override;
 
-    virtual void OnLeftButtonDown();
+protected:
+    PointPickerInteractorStyle();
+    ~PointPickerInteractorStyle();
 };
