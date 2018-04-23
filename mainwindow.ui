@@ -39,7 +39,7 @@
       <x>50</x>
       <y>20</y>
       <width>256</width>
-      <height>530</height>
+      <height>531</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -236,15 +236,16 @@
      </property>
     </item>
    </widget>
-   <widget class="QtCharts::QChartView" name="View3d">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>570</y>
-      <width>1500</width>
-      <height>240</height>
+      <x>51</x>
+      <y>569</y>
+      <width>1501</width>
+      <height>241</height>
      </rect>
     </property>
+    <layout class="QHBoxLayout" name="mainChartLayout"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -289,11 +290,14 @@ background-color: rgb(255, 255, 255);
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
-   <addaction name="separator"/>
    <addaction name="actionactionRotateRight"/>
    <addaction name="actionRotateLeft"/>
    <addaction name="actionMoveLeft"/>
    <addaction name="actionMoveRight"/>
+   <addaction name="separator"/>
+   <addaction name="separator"/>
+   <addaction name="actionOpenOceanFile"/>
+   <addaction name="actionOceanStart"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
@@ -353,18 +357,37 @@ background-color: rgb(255, 255, 255);
     <string>MoveLeft</string>
    </property>
   </action>
+  <action name="actionOpenOceanFile">
+   <property name="icon">
+    <iconset resource="Resources/resources.qrc">
+     <normaloff>:/images/images/open.png</normaloff>:/images/images/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>OpenOceanFile</string>
+   </property>
+   <property name="toolTip">
+    <string>OpenOceanFile</string>
+   </property>
+  </action>
+  <action name="actionOceanStart">
+   <property name="icon">
+    <iconset resource="Resources/resources.qrc">
+     <normaloff>:/images/images/play.png</normaloff>:/images/images/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>OceanChartStart</string>
+   </property>
+   <property name="toolTip">
+    <string>OceanChartStart</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>QVTKOpenGLWidget</class>
    <extends>QWidget</extends>
-   <header>QVTKOpenGLWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QtCharts::QChartView</class>
-   <extends>QGraphicsView</extends>
-   <header location="global">qchartview.h</header>
+   <header location="global">QVTKOpenGLWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

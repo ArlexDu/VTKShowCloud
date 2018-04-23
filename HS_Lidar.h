@@ -20,8 +20,8 @@ public:
 	~HS_Lidar();
 
 	void initData(FILE *fp);
-	void getHeader(FILE *fp);
-	void getChannel(FILE *fp,HS_Lidar_Channel &CH);
+    void getHeader(FILE *fp);
+    void getChannel(FILE *fp,HS_Lidar_Channel &CH);
 
 };
 

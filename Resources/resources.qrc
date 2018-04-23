@@ -5,5 +5,8 @@
         <file>images/rotate_right.png</file>
         <file>images/right.png</file>
         <file>images/left.png</file>
+        <file>images/jump.png</file>
+        <file>images/pause.png</file>
+        <file>images/play.png</file>
     </qresource>
 </RCC>

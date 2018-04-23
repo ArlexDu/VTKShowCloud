@@ -37,6 +37,10 @@
 #include "HS_Lidar.h"
 #include "vtkDataReader.h"
 #include "PointPickerInteractorStyle.h"
+#include "chart.h"
+#include "drawdata.h"
+#include "drawchartthread.h"
+#include "chartview.h"
 
 namespace Ui {
     class MainWindow;
@@ -52,10 +56,19 @@ class MainWindow : public QMainWindow
 public:
     MainWindow();
     ~MainWindow() override;
+    Chart *chart;
+    ChartView *chartView;
+    DrawChartThread *drawChartThread;
 
 private slots:
     void slotExit();
     void openLas();
+    void on_actionMoveRight_triggered();
+    void on_actionMoveLeft_triggered();
+    void on_actionOceanStart_triggered();
+    void on_actionOpenOceanFile_triggered();
+public slots:
+    void onDrawChanged(DrawData info);
 
 private:
     Ui_MainWindow *ui;
