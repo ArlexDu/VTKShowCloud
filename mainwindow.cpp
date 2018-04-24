@@ -1,5 +1,6 @@
 #include <QMessageBox>
 #include "mainwindow.h"
+#include "Simplification.h"
 
 using namespace std;
 
@@ -33,11 +34,14 @@ void MainWindow::openLas() {
     string filepath = "/Users/arlex/Downloads/111.las";
     vtkSmartPointer<vtkDataReader> reader = vtkSmartPointer<vtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
-    reader->Update();
+
+    vtkSmartPointer<Simplification> processing = vtkSmartPointer<Simplification>::New();
+    processing->SetInputConnection(reader->GetOutputPort());
+    processing->Update();
 
     vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
 
-    mapper->SetInputData(reader->GetOutput());
+    mapper->SetInputData(processing->GetOutput());
     //设置点的颜色
     mapper->SetScalarModeToUsePointFieldData();
     mapper->SelectColorArray("Colors");

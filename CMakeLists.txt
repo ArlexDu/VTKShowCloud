@@ -35,9 +35,9 @@ include_directories(
 )
 
 # Set your files and resources here
-set(Srcs main.cpp mainwindow.cpp HS_Lidar.cpp vtkDataReader.cpp chart.cpp chartview.cpp drawchartthread.cpp PointPickerInteractorStyle.cpp)
+set(Srcs main.cpp mainwindow.cpp HS_Lidar.cpp mineDataObject.cpp vtkDataReader.cpp chart.cpp chartview.cpp drawchartthread.cpp PointPickerInteractorStyle.cpp Simplification.cpp Simplification.h)
 
-set(Hdrs mainwindow.h HS_Lidar_Header.h HS_Lidar_Channel.h HS_Lidar.h vtkDataReader.h chart.h chartview.h drawdata.h drawchartthread.h PointPickerInteractorStyle.h)
+set(Hdrs mainwindow.h HS_Lidar_Header.h HS_Lidar_Channel.h HS_Lidar.h mineDataObject.h vtkDataReader.h chart.h chartview.h drawdata.h drawchartthread.h PointPickerInteractorStyle.h)
 
 set(MOC_Hdrs mainwindow.h)
 
