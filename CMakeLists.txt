@@ -22,7 +22,7 @@ link_directories(${libLAS_LIBRARY_DIRS})
 
 #VTK config
 find_package(VTK REQUIRED)
-include( ${VTK_USE_FILE} )
+include(${VTK_USE_FILE})
 if ("${VTK_QT_VERSION}" STREQUAL "")
     message(FATAL_ERROR "VTK was not built with Qt")
 endif ()
@@ -35,17 +35,12 @@ include_directories(
 )
 
 # Set your files and resources here
-set(cloudSrcs pointcloud/nvtkDataObject.cpp pointcloud/nvtkDataReader.cpp pointcloud/nvtkPointPickerInteractorStyle.cpp pointcloud/nvtkDataSimplify.cpp pointcloud/nvtkDataSimplify.h)
 
-set(waveSrcs waveform/HS_Lidar.cpp waveform/chart.cpp waveform/chartview.cpp waveform/drawchartthread.cpp)
+aux_source_directory(./pointcloud cloudSrcs)
 
-set(cloudHdrs pointcloud/nvtkDataObject.h pointcloud/nvtkDataReader.h pointcloud/nvtkPointPickerInteractorStyle.h)
+aux_source_directory(./waveform waveSrcs)
 
-set(waveHdrs waveform/HS_Lidar_Header.h waveform/HS_Lidar_Channel.h waveform/HS_Lidar.h waveform/chart.h waveform/chartview.h waveform/drawdata.h waveform/drawchartthread.h)
-
-set(Srcs main.cpp mainwindow.cpp ${cloudSrcs} ${waveSrcs})
-
-set(Hdrs mainwindow.h ${cloudHdrs} ${waveHdrs})
+set(Srcs main.cpp mainwindow.h mainwindow.cpp ${cloudSrcs} ${waveSrcs})
 
 set(MOC_Hdrs mainwindow.h)
 
@@ -75,7 +70,7 @@ source_group("Generated" FILES
         )
 
 #Add Executable
-add_executable(VTKShowCloud ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
+add_executable(VTKShowCloud ${Srcs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 #add_executable(VTKShowCloud MACOSX_BUNDLE ${Srcs} ${Hdrs} ${UI_Srcs} ${MOC_Hdrs} ${QRC_Srcs})
 
 qt5_use_modules(VTKShowCloud Core Gui Widgets Charts)
