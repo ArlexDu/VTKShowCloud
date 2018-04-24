@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
-#include "drawdata.h"
+#include "waveform/drawdata.h"
 
 extern int qInitResources_resources();
 

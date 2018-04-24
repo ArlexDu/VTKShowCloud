@@ -12,36 +12,36 @@
 #include <vtkPolyVertex.h>
 #include <vtkPointData.h>
 
-#include "Simplification.h"
-#include "mineDataObject.h"
+#include "nvtkDataSimplify.h"
+#include "nvtkDataObject.h"
 
-vtkStandardNewMacro(Simplification);
+vtkStandardNewMacro(nvtkDataSimplify);
 
-Simplification::Simplification()
+nvtkDataSimplify::nvtkDataSimplify()
 {
     this->SetNumberOfInputPorts( 1 );
     this->SetNumberOfOutputPorts( 1 );
 }
 
-Simplification::~Simplification()
+nvtkDataSimplify::~nvtkDataSimplify()
 {
 }
 
-void Simplification::PrintSelf(ostream& os, vtkIndent indent)
+void nvtkDataSimplify::PrintSelf(ostream& os, vtkIndent indent)
 {
     this->Superclass::PrintSelf(os, indent);
 }
 
 
-int Simplification::FillInputPortInformation(
+int nvtkDataSimplify::FillInputPortInformation(
         int vtkNotUsed(port), vtkInformation* info)
 {
-    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "mineDataObject");
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "nvtkDataObject");
     return 1;
 }
 
 //----------------------------------------------------------------------------
-int Simplification::RequestData(
+int nvtkDataSimplify::RequestData(
         vtkInformation* vtkNotUsed(request),
         vtkInformationVector **inputVector,
         vtkInformationVector* outputVector )
@@ -51,7 +51,7 @@ int Simplification::RequestData(
             outInfo->Get( vtkDataObject::DATA_OBJECT() ) );
 
     vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-    mineDataObject *input = mineDataObject::SafeDownCast(
+    nvtkDataObject *input = nvtkDataObject::SafeDownCast(
             inInfo->Get(vtkDataObject::DATA_OBJECT()));
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = input->Getcloud();
     //  精简点云与去噪
@@ -65,7 +65,7 @@ int Simplification::RequestData(
     return 1;
 }
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr Simplification::RadiusOutlierRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+pcl::PointCloud<pcl::PointXYZ>::Ptr nvtkDataSimplify::RadiusOutlierRemove(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     pcl::RadiusOutlierRemoval<pcl::PointXYZ> sor;
     pcl::PointCloud<pcl::PointXYZ>::Ptr filter_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     printf("cloud width is %d \n", cloud->width);
@@ -77,7 +77,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr Simplification::RadiusOutlierRemove(pcl::Poi
     return filter_cloud;
 }
 
-void Simplification::ConvertToGrid(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, vtkUnstructuredGrid *grid) {
+void nvtkDataSimplify::ConvertToGrid(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, vtkUnstructuredGrid *grid) {
     unsigned int red[3] = {255, 0, 0};
     unsigned int green[3] = {0, 255, 0};
     unsigned int blue[3] = {0, 0, 255};

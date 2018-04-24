@@ -29,13 +29,13 @@
 #include <fstream>
 #include <iostream>
 
-class vtkDataReader : public vtkDataObjectAlgorithm {
+class nvtkDataReader : public vtkDataObjectAlgorithm {
 
 public:
 
-vtkTypeMacro(vtkDataReader, vtkDataObjectAlgorithm)
+vtkTypeMacro(nvtkDataReader, vtkDataObjectAlgorithm)
 
-    static vtkDataReader *New();
+    static nvtkDataReader *New();
 
     void PrintSelf(ostream &os, vtkIndent indent) override;
 
@@ -49,9 +49,9 @@ vtkTypeMacro(vtkDataReader, vtkDataObjectAlgorithm)
 
 
 protected:
-    vtkDataReader();
+    nvtkDataReader();
 
-    virtual ~vtkDataReader();
+    virtual ~nvtkDataReader();
 
 //  数据对象初始化
     int RequestDataObject( vtkInformation *request, vtkInformationVector **inputVector, vtkInformationVector *outputVector);
@@ -66,8 +66,8 @@ protected:
     char *FileName;
 
 private:
-    vtkDataReader(const vtkDataReader &);  // Not implemented
-    void operator=(const vtkDataReader &);    // Not implemented
+    nvtkDataReader(const nvtkDataReader &);  // Not implemented
+    void operator=(const nvtkDataReader &);    // Not implemented
 //  las文件转化为pcd格式
     void Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 };

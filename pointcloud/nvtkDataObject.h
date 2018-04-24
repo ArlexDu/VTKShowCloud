@@ -3,24 +3,24 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/radius_outlier_removal.h>
 
-class mineDataObject : public vtkDataObject
+class nvtkDataObject : public vtkDataObject
 {
 
 public:
-	static mineDataObject* New();
-	vtkTypeMacro(mineDataObject,vtkDataObject);
+	static nvtkDataObject* New();
+	vtkTypeMacro(nvtkDataObject,vtkDataObject);
 
 	void PrintSelf( ostream& os, vtkIndent indent );
-	void ShallowCopy(mineDataObject* t);
+	void ShallowCopy(nvtkDataObject* t);
 
 	void Setcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cp);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr Getcloud();
-	mineDataObject();
-	~mineDataObject();
+	nvtkDataObject();
+	~nvtkDataObject();
 
 private:
-	mineDataObject( const mineDataObject& ); // Not implemented.
-	void operator = ( const mineDataObject& ); // Not implemented.
+	nvtkDataObject( const nvtkDataObject& ); // Not implemented.
+	void operator = ( const nvtkDataObject& ); // Not implemented.
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
 };
 

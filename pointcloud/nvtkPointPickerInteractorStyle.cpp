@@ -8,17 +8,17 @@
 #include <vtkActor.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
-#include "PointPickerInteractorStyle.h"
+#include "nvtkPointPickerInteractorStyle.h"
 #include <vtkRenderWindow.h>
 #include <vtkProperty.h>
 
-vtkStandardNewMacro(PointPickerInteractorStyle);
+vtkStandardNewMacro(nvtkPointPickerInteractorStyle);
 
-PointPickerInteractorStyle::PointPickerInteractorStyle() {}
+nvtkPointPickerInteractorStyle::nvtkPointPickerInteractorStyle() {}
 
-PointPickerInteractorStyle::~PointPickerInteractorStyle() {}
+nvtkPointPickerInteractorStyle::~nvtkPointPickerInteractorStyle() {}
 
-void PointPickerInteractorStyle::OnLeftButtonDown() {
+void nvtkPointPickerInteractorStyle::OnLeftButtonDown() {
     // Pick from this location.
     int x = this->Interactor->GetEventPosition()[0];
     int y = this->Interactor->GetEventPosition()[1];

@@ -8,7 +8,7 @@
 #include "vtk-8.1/vtkDataSetMapper.h"
 
 //Reader includes
-#include "vtkDataReader.h"
+#include "pointcloud/nvtkDataReader.h"
 
 int TestGeoJSON(int argc, char **argv);
 

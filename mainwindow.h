@@ -34,13 +34,13 @@
 #include <vtkOrientationMarkerWidget.h>
 
 #include "ui_mainwindow.h"
-#include "HS_Lidar.h"
-#include "vtkDataReader.h"
-#include "PointPickerInteractorStyle.h"
-#include "chart.h"
-#include "drawdata.h"
-#include "drawchartthread.h"
-#include "chartview.h"
+#include "waveform/HS_Lidar.h"
+#include "pointcloud/nvtkDataReader.h"
+#include "pointcloud/nvtkPointPickerInteractorStyle.h"
+#include "waveform/chart.h"
+#include "waveform/drawdata.h"
+#include "waveform/drawchartthread.h"
+#include "waveform/chartview.h"
 
 namespace Ui {
     class MainWindow;

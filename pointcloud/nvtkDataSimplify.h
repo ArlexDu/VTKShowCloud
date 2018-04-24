@@ -12,19 +12,19 @@
 #include <pcl/filters/radius_outlier_removal.h>
 
 class vtkDataSet;
-class mineDataObject;
+class nvtkDataObject;
 
-class Simplification : public vtkUnstructuredGridAlgorithm
+class nvtkDataSimplify : public vtkUnstructuredGridAlgorithm
 {
 public:
-    static Simplification *New();
-vtkTypeMacro(Simplification,vtkUnstructuredGridAlgorithm);
+    static nvtkDataSimplify *New();
+vtkTypeMacro(nvtkDataSimplify,vtkUnstructuredGridAlgorithm);
 
     void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
-    Simplification();
-    ~Simplification();
+    nvtkDataSimplify();
+    ~nvtkDataSimplify();
 
     virtual int RequestData(
             vtkInformation* request,
@@ -38,8 +38,8 @@ protected:
     void ConvertToGrid(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, vtkUnstructuredGrid *unstructuredGrid);
 
 private:
-    Simplification( const Simplification& ); // Not implemented.
-    void operator = ( const Simplification& );  // Not implemented.
+    nvtkDataSimplify( const nvtkDataSimplify& ); // Not implemented.
+    void operator = ( const nvtkDataSimplify& );  // Not implemented.
 };
 
 

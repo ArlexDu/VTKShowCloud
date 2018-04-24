@@ -13,7 +13,7 @@
 #include "vtk-8.1/vtkPointData.h"
 #include "vtk-8.1/vtkVertexGlyphFilter.h"
 #include <liblas/liblas.hpp>
-#include "vtkDataReader.h"
+#include "pointcloud/nvtkDataReader.h"
 int main()
 {
     vtkSmartPointer<vtkLASReader> reader = vtkSmartPointer<vtkLASReader>::New();

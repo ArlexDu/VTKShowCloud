@@ -1,9 +1,9 @@
-#include "vtkDataReader.h"
-#include "mineDataObject.h"
+#include "nvtkDataReader.h"
+#include "nvtkDataObject.h"
 
-vtkStandardNewMacro(vtkDataReader);
+vtkStandardNewMacro(nvtkDataReader);
 
-vtkDataReader::vtkDataReader() {
+nvtkDataReader::nvtkDataReader() {
     this->FileName = NULL;
     this->pointRecordsCount = 0;
     this->Header = NULL;
@@ -11,7 +11,7 @@ vtkDataReader::vtkDataReader() {
     this->SetNumberOfOutputPorts(1);
 }
 
-vtkDataReader::~vtkDataReader() {
+nvtkDataReader::~nvtkDataReader() {
     if (!FileName)
         delete[] FileName;
 
@@ -19,27 +19,27 @@ vtkDataReader::~vtkDataReader() {
         delete Header;
 }
 
-int vtkDataReader::FillOutputPortInformation(
+int nvtkDataReader::FillOutputPortInformation(
         int vtkNotUsed(port), vtkInformation* info)
 {
-    info->Set(vtkDataObject::DATA_TYPE_NAME(), "mineDataObject");
+    info->Set(vtkDataObject::DATA_TYPE_NAME(), "nvtkDataObject");
     return 1;
 }
 
 
-int vtkDataReader::RequestDataObject(vtkInformation* vtkNotUsed(request),
+int nvtkDataReader::RequestDataObject(vtkInformation* vtkNotUsed(request),
                                           vtkInformationVector** vtkNotUsed(inputVector),
                                           vtkInformationVector* outputVector )
 {
     printf("create output object");
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
-    mineDataObject* output = mineDataObject::SafeDownCast(
+    nvtkDataObject* output = nvtkDataObject::SafeDownCast(
             outInfo->Get( vtkDataObject::DATA_OBJECT() ) );
 
 
     if ( ! output )
     {
-        output = mineDataObject::New();
+        output = nvtkDataObject::New();
         outInfo->Set( vtkDataObject::DATA_OBJECT(), output );
         output->FastDelete();
         outInfo->Set(vtkDataObject::DATA_OBJECT(),output);
@@ -51,7 +51,7 @@ int vtkDataReader::RequestDataObject(vtkInformation* vtkNotUsed(request),
     return 1;
 }
 
-int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
+int nvtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
                                vtkInformationVector ** vtkNotUsed(request),
                                vtkInformationVector *outputVector) {
     printf("fill data to ouput object");
@@ -59,7 +59,7 @@ int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
     vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
     // Get the ouptut
-    mineDataObject *output = mineDataObject::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    nvtkDataObject *output = nvtkDataObject::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     // Open LAS File for reading
     std::ifstream ifs;
@@ -76,7 +76,7 @@ int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
 //    las转化为pcd格式
     Las2Pcd(reader, cloud);
 
-    vtkSmartPointer<mineDataObject> data = vtkSmartPointer<mineDataObject>::New();
+    vtkSmartPointer<nvtkDataObject> data = vtkSmartPointer<nvtkDataObject>::New();
     data->Setcloud(cloud);
 
     output->ShallowCopy(data);
@@ -85,13 +85,13 @@ int vtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
     return VTK_OK;
 }
 
-void vtkDataReader::PrintSelf(ostream &os, vtkIndent indent) {
+void nvtkDataReader::PrintSelf(ostream &os, vtkIndent indent) {
     Superclass::PrintSelf(os, indent);
-    os << "vtkDataReader" << std::endl;
+    os << "nvtkDataReader" << std::endl;
     os << "Filename: " << this->FileName << std::endl;
 }
 
-void vtkDataReader::Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+void nvtkDataReader::Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     Header = new liblas::Header(reader.GetHeader());
     pointRecordsCount = Header->GetPointRecordsCount();
     printf("read number is %d \n", pointRecordsCount);

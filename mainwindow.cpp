@@ -1,6 +1,6 @@
 #include <QMessageBox>
 #include "mainwindow.h"
-#include "Simplification.h"
+#include "pointcloud/nvtkDataSimplify.h"
 
 using namespace std;
 
@@ -29,13 +29,13 @@ void MainWindow::slotExit() {
 //打开资源管理器选择文件
 void MainWindow::openLas() {
 //    选择文件
-//    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
-//    std::string filepath = path.toLocal8Bit().constData();
-    string filepath = "/Users/arlex/Downloads/111.las";
-    vtkSmartPointer<vtkDataReader> reader = vtkSmartPointer<vtkDataReader>::New();
+    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
+    std::string filepath = path.toLocal8Bit().constData();
+//    string filepath = "/Users/arlex/Downloads/111.las";
+    vtkSmartPointer<nvtkDataReader> reader = vtkSmartPointer<nvtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
 
-    vtkSmartPointer<Simplification> processing = vtkSmartPointer<Simplification>::New();
+    vtkSmartPointer<nvtkDataSimplify> processing = vtkSmartPointer<nvtkDataSimplify>::New();
     processing->SetInputConnection(reader->GetOutputPort());
     processing->Update();
 
@@ -65,7 +65,7 @@ void MainWindow::openLas() {
     vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
-    vtkSmartPointer<PointPickerInteractorStyle> style = vtkSmartPointer<PointPickerInteractorStyle>::New();
+    vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
     renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴

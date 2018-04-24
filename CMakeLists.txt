@@ -35,15 +35,23 @@ include_directories(
 )
 
 # Set your files and resources here
-set(Srcs main.cpp mainwindow.cpp HS_Lidar.cpp mineDataObject.cpp vtkDataReader.cpp chart.cpp chartview.cpp drawchartthread.cpp PointPickerInteractorStyle.cpp Simplification.cpp Simplification.h)
+set(cloudSrcs pointcloud/nvtkDataObject.cpp pointcloud/nvtkDataReader.cpp pointcloud/nvtkPointPickerInteractorStyle.cpp pointcloud/nvtkDataSimplify.cpp pointcloud/nvtkDataSimplify.h)
 
-set(Hdrs mainwindow.h HS_Lidar_Header.h HS_Lidar_Channel.h HS_Lidar.h mineDataObject.h vtkDataReader.h chart.h chartview.h drawdata.h drawchartthread.h PointPickerInteractorStyle.h)
+set(waveSrcs waveform/HS_Lidar.cpp waveform/chart.cpp waveform/chartview.cpp waveform/drawchartthread.cpp)
+
+set(cloudHdrs pointcloud/nvtkDataObject.h pointcloud/nvtkDataReader.h pointcloud/nvtkPointPickerInteractorStyle.h)
+
+set(waveHdrs waveform/HS_Lidar_Header.h waveform/HS_Lidar_Channel.h waveform/HS_Lidar.h waveform/chart.h waveform/chartview.h waveform/drawdata.h waveform/drawchartthread.h)
+
+set(Srcs main.cpp mainwindow.cpp ${cloudSrcs} ${waveSrcs})
+
+set(Hdrs mainwindow.h ${cloudHdrs} ${waveHdrs})
 
 set(MOC_Hdrs mainwindow.h)
 
 set(UIs mainwindow.ui)
 
-set(QRCs Resources/resources.qrc)
+set(QRCs resources/resources.qrc)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
@@ -54,7 +62,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets Charts REQUIRED QUIET)
 qt5_wrap_ui(UI_Srcs ${UIs})
 qt5_add_resources(QRC_Srcs ${QRCs})
 
-source_group("Resources" FILES
+source_group("resources" FILES
         ${UIs}
         ${QRCs}
         ${EXE_ICON} # Not present
