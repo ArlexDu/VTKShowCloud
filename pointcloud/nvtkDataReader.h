@@ -1,20 +1,26 @@
 #ifndef __vtkLASReader_h
 #define __vtkLASReader_h
 
+// C++ includes
+#include <fstream>
+#include <iostream>
+#include <vector>
+
 // VTK Includes
-#include <vtk-8.1/vtkPolyDataAlgorithm.h>
-#include <vtk-8.1/vtkUnstructuredGridAlgorithm.h>
-#include <vtk-8.1/vtkDataObjectAlgorithm.h>
-#include <vtk-8.1/vtkUnstructuredGrid.h>
-#include <vtk-8.1/vtkPolyData.h>
-#include <vtk-8.1/vtkCellArray.h>
-#include <vtk-8.1/vtkPoints.h>
-#include <vtk-8.1/vtkPointData.h>
-#include <vtk-8.1/vtkVertexGlyphFilter.h>
-#include <vtk-8.1/vtkInformation.h>
-#include <vtk-8.1/vtkInformationVector.h>
-#include <vtk-8.1/vtkObjectFactory.h>
-#include <vtk-8.1/vtkPolyVertex.h>
+#include <vtkPolyDataAlgorithm.h>
+#include <vtkUnstructuredGridAlgorithm.h>
+#include <vtkDataObjectAlgorithm.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkPolyData.h>
+#include <vtkCellArray.h>
+#include <vtkPoints.h>
+#include <vtkPointData.h>
+#include <vtkVertexGlyphFilter.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkObjectFactory.h>
+#include <vtkPolyVertex.h>
+
 
 
 //libLAS Includes
@@ -25,9 +31,7 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/radius_outlier_removal.h>
 
-// C++ includes
-#include <fstream>
-#include <iostream>
+using namespace std;
 
 class nvtkDataReader : public vtkDataObjectAlgorithm {
 
@@ -54,9 +58,12 @@ protected:
     virtual ~nvtkDataReader();
 
 //  数据对象初始化
-    int RequestDataObject( vtkInformation *request, vtkInformationVector **inputVector, vtkInformationVector *outputVector);
+    int
+    RequestDataObject(vtkInformation *request, vtkInformationVector **inputVector, vtkInformationVector *outputVector);
+
 //  数据处理
-    int RequestData(vtkInformation *request, vtkInformationVector **inputVector, vtkInformationVector *outputVector) override;
+    int RequestData(vtkInformation *request, vtkInformationVector **inputVector,
+                    vtkInformationVector *outputVector) override;
 
 //  读取LAS文件函数
     int FillOutputPortInformation(int port, vtkInformation *info) override;
@@ -68,8 +75,16 @@ protected:
 private:
     nvtkDataReader(const nvtkDataReader &);  // Not implemented
     void operator=(const nvtkDataReader &);    // Not implemented
-//  las文件转化为pcd格式
-    void Las2Pcd(liblas::Reader &reader, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+    char *FileType;
+
+//  读取txt文件并转化为pcd格式
+    int ReadTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+//  读取las文件并转化为pcd格式
+    int ReadLas(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+//  分割字符串
+    void Split(char sentence[], char *delim, char *result[]);
 };
 
 #endif // __vtkLASReader_h

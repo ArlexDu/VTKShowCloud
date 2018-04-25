@@ -32,6 +32,8 @@
 #include <QFileDialog.h>
 #include <vtkAxesActor.h>
 #include <vtkOrientationMarkerWidget.h>
+#include <QMessageBox>
+
 
 #include "ui_mainwindow.h"
 #include "waveform/HS_Lidar.h"
@@ -41,6 +43,10 @@
 #include "waveform/drawdata.h"
 #include "waveform/drawchartthread.h"
 #include "waveform/chartview.h"
+#include "pointcloud/nvtkDataSimplify.h"
+
+#include <iostream>
+#include <vector>
 
 namespace Ui {
     class MainWindow;

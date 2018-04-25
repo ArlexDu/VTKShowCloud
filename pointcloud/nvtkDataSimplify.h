@@ -10,6 +10,7 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/radius_outlier_removal.h>
+#include <iostream>
 
 class vtkDataSet;
 class nvtkDataObject;

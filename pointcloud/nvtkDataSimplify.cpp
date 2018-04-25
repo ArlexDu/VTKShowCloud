@@ -11,6 +11,7 @@
 #include <vtkUnsignedCharArray.h>
 #include <vtkPolyVertex.h>
 #include <vtkPointData.h>
+#include <vtkDoubleArray.h>
 
 #include "nvtkDataSimplify.h"
 #include "nvtkDataObject.h"
@@ -85,6 +86,9 @@ void nvtkDataSimplify::ConvertToGrid(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, 
     vtkUnsignedCharArray *colors = vtkUnsignedCharArray::New();
     colors->SetName("Colors");
     colors->SetNumberOfComponents(3);
+    vtkDoubleArray *indexs = vtkDoubleArray::New();
+    indexs->SetName("Indexs");
+    indexs->SetNumberOfComponents(1);
     vtkSmartPointer<vtkPolyVertex> vertex = vtkSmartPointer<vtkPolyVertex>::New();
     vertex->GetPointIds()->SetNumberOfIds(cloud->width);
     for (int i = 0; i < cloud->width; i++) {
@@ -94,9 +98,12 @@ void nvtkDataSimplify::ConvertToGrid(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, 
         } else {
             colors->InsertNextTuple3(green[0], green[1], green[2]);
         }
+//        std::cout<<i<<" : "<<cloud->points[i].data[3]<<std::endl;
+        indexs->InsertNextTuple1(cloud->points[i].data[3]);
         vertex->GetPointIds()->SetId(i, i);
     }
     grid->SetPoints(points);
     grid->InsertNextCell(vertex->GetCellType(), vertex->GetPointIds());
+    grid->GetPointData()->AddArray(indexs);
     grid->GetPointData()->AddArray(colors);
 }

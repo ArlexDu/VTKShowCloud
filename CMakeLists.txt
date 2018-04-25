@@ -7,6 +7,8 @@ foreach (p
     endif ()
 endforeach ()
 
+set(CMAKE_CXX_STANDARD 11)
+
 project(VTKShowCloud)
 
 #PCL config

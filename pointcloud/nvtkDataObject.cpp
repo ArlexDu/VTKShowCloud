@@ -1,5 +1,4 @@
 #include "nvtkDataObject.h"
-#include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(nvtkDataObject);
 

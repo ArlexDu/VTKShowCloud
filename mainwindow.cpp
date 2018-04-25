@@ -1,6 +1,4 @@
-#include <QMessageBox>
 #include "mainwindow.h"
-#include "pointcloud/nvtkDataSimplify.h"
 
 using namespace std;
 
@@ -10,7 +8,6 @@ MainWindow::MainWindow() {
     this->ui = new Ui_MainWindow;
     this->ui->setupUi(this);
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openLas()));
-
     //显示二维波形图部分
     chart = new Chart();
     chartView = new ChartView(chart->chart);
@@ -29,9 +26,10 @@ void MainWindow::slotExit() {
 //打开资源管理器选择文件
 void MainWindow::openLas() {
 //    选择文件
-    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las)");
-    std::string filepath = path.toLocal8Bit().constData();
+//    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las);;txt(*.txt)");
+//    std::string filepath = path.toLocal8Bit().constData();
 //    string filepath = "/Users/arlex/Downloads/111.las";
+    string filepath = "/Users/arlex/Documents/课程/激光点云/2015_12_15_07_31_01_117.txt";
     vtkSmartPointer<nvtkDataReader> reader = vtkSmartPointer<nvtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
 
@@ -66,6 +64,7 @@ void MainWindow::openLas() {
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
     vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
+    style->SetFileName(filepath.c_str());
     renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴

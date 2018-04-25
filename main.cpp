@@ -1,9 +1,4 @@
 #include "mainwindow.h"
-#include <QApplication>
-#include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
-#include "waveform/drawdata.h"
-
 extern int qInitResources_resources();
 
 int main(int argc, char *argv[])
@@ -20,7 +15,6 @@ int main(int argc, char *argv[])
     qInitResources_resources();
 
     qRegisterMetaType<DrawData>();
-
     MainWindow w;
     w.show();
     return app.exec();
