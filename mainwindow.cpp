@@ -1,3 +1,4 @@
+#include <geos/platform.h>
 #include "mainwindow.h"
 
 using namespace std;
@@ -13,6 +14,15 @@ MainWindow::MainWindow() {
     chartView = new ChartView(chart->chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     ui->mainChartLayout->addWidget(chartView);
+    ui->propertyTable->setItem(0, 0,  new QTableWidgetItem(QString("GPS_Time")));
+    ui->propertyTable->setItem(1, 0,  new QTableWidgetItem(QString("X")));
+    ui->propertyTable->setItem(2, 0,  new QTableWidgetItem(QString("Y")));
+    ui->propertyTable->setItem(3, 0,  new QTableWidgetItem(QString("Z")));
+    ui->propertyTable->setItem(4, 0,  new QTableWidgetItem(QString("Intensity")));
+    ui->propertyTable->setItem(5, 0,  new QTableWidgetItem(QString("Type")));
+    ui->propertyTable->setItem(6, 0,  new QTableWidgetItem(QString("ShotNum")));
+    ui->propertyTable->setItem(7, 0,  new QTableWidgetItem(QString("Begian")));
+    ui->propertyTable->setItem(8, 0,  new QTableWidgetItem(QString("PeakLoc")));
 }
 
 MainWindow::~MainWindow() {
@@ -64,7 +74,8 @@ void MainWindow::openLas() {
     renderWindowInteractor->SetRenderWindow(renderWindow);
 
     vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
-    style->SetFileName(filepath.c_str());
+    style->SetFileName(filepath);
+    style->table = ui->propertyTable;
     renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴
@@ -140,6 +151,151 @@ void MainWindow::on_actionOpenOceanFile_triggered() {
     }
     chart->filename = fileName;
 
+}
+
+void MainWindow::on_showWave_clicked()
+{
+    if(chart->isPlay){
+        drawChartThread->requestInterruption();
+        QIcon icon;
+        icon.addFile(tr(":/images/images/play.png"));
+        ui->actionOceanStart->setIcon(icon);
+        chart->isPlay = !chart->isPlay;
+    }
+
+    string filename = chart->filename.toStdString();
+    FILE *fp;
+    fp = fopen(filename.c_str(), "rb");
+
+    int x1 = 0;
+    int x2 = 0;
+    int x3 = 0;
+    int x4 = 0;
+    DrawData *drawData = new DrawData;
+
+
+
+    //读取4个波段数据
+
+    //每帧数据长6500
+    int nLen = 6500;
+    short *sData_CH0 = new short [nLen];
+    short *sData_CH1 = new short [nLen];
+    short *sData_CH2 = new short [nLen];
+    short *sData_CH3 = new short [nLen];
+    memset(sData_CH0, 0, sizeof(short)*nLen);
+    memset(sData_CH1, 0, sizeof(short)*nLen);
+    memset(sData_CH2, 0, sizeof(short)*nLen);
+    memset(sData_CH3, 0, sizeof(short)*nLen);
+
+    //LADM2-激光数据头大小，固定值
+    static const int nLen_Header = 160;
+
+
+
+    //每个Binshot长度是固定的
+    double dLen_Binshot = 2*4*nLen;
+
+    int nTragetShot = ui->propertyTable->item(6,1)->text().toInt();
+
+    //指针跳的长度 nTragetShot是想要读取的帧号
+    int64 nSeekL = nLen_Header + dLen_Binshot*nTragetShot;
+
+    //常规fseek第二个参数为long 最大值为2147483647, 激光数据的字节更大，这里用_fseeki64
+    fseek(fp, nSeekL, SEEK_SET);
+
+    fread(sData_CH0, sizeof(short), nLen, fp);
+    fread(sData_CH1, sizeof(short), nLen, fp);
+    fread(sData_CH2, sizeof(short), nLen, fp);
+    fread(sData_CH3, sizeof(short), nLen, fp);
+
+
+
+    drawData->maxY = 0;
+    drawData->minY = 0;
+
+
+    drawData->size1 = nLen;
+    drawData->size2 = nLen;
+    drawData->size3 = nLen;
+    drawData->size4 = nLen;
+
+    for (int j=0;j < nLen;j++) {
+        if(sData_CH0[j]<(-2000)){
+            sData_CH0[j]=0;
+        }
+        if(sData_CH0[j]<(-2000)){
+            sData_CH0[j]=0;
+        }
+        if(sData_CH0[j]<drawData->minY){
+            drawData->minY= sData_CH0[j];
+        }
+        if(sData_CH1[j]>drawData->maxY){
+            drawData->maxY= sData_CH0[j];
+        }
+        drawData->line2[j]= sData_CH0[j];
+        x1++;
+    }
+    for (int j=0;j < nLen;j++) {
+        if(sData_CH1[j]<(-2000)){
+            sData_CH1[j]=0;
+        }
+        if(sData_CH1[j]<(-2000)){
+            sData_CH1[j]=0;
+        }
+        if(sData_CH1[j]<drawData->minY){
+            drawData->minY= sData_CH1[j];
+        }
+        if(sData_CH1[j]>drawData->maxY){
+            drawData->maxY= sData_CH1[j];
+        }
+        drawData->line2[j]= sData_CH1[j];
+        x2++;
+    }
+
+    for (int j=0;j < nLen;j++) {
+        if(sData_CH2[j]<(-2000)){
+            sData_CH2[j]=0;
+        }
+        if(sData_CH2[j]<(-2000)){
+            sData_CH2[j]=0;
+        }
+        if(sData_CH2[j]<drawData->minY){
+            drawData-> minY= sData_CH1[j];
+        }
+        if(sData_CH2[j]>drawData->maxY){
+            drawData->maxY= sData_CH2[j];
+        }
+        drawData->line3[j]= sData_CH2[j];
+        x3++;
+    }
+
+    for (int j=0;j < nLen;j++) {
+        if(sData_CH3[j]<(-2000)){
+            sData_CH3[j]=0;
+        }
+        if(sData_CH3[j]<(-2000)){
+            sData_CH3[j]=0;
+        }
+        if(sData_CH3[j]<drawData->minY){
+            drawData->minY= sData_CH1[j];
+        }
+        if(sData_CH3[j]>drawData->maxY){
+            drawData->maxY= sData_CH3[j];
+        }
+        drawData->line4[j]= sData_CH3[j];
+        x4++;
+    }
+
+    drawData->x1 = x1;
+    drawData->x2 = x2;
+    drawData->x3 = x3;
+    drawData->x4 = x4;
+    nTragetShot++;
+    drawData->i = nTragetShot;
+    drawChartThread->i = nTragetShot;
+    chart->newFrame(*drawData);
+    fclose(fp);
 }
 
 

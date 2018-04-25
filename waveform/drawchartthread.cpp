@@ -117,7 +117,7 @@ if(chart->chartType==1){
         drawData->size4 = nLen;
 
         for (int j=0;j < nLen;j++) {
-            if(sData_CH0[i]<(-2000)){
+            if(sData_CH0[j]<(-2000)){
                 sData_CH0[j]=0;
             }
             if(sData_CH0[j]<(-2000)){

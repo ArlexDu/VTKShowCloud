@@ -73,6 +73,7 @@ private slots:
     void on_actionMoveLeft_triggered();
     void on_actionOceanStart_triggered();
     void on_actionOpenOceanFile_triggered();
+    void on_showWave_clicked();
 public slots:
     void onDrawChanged(DrawData info);
 

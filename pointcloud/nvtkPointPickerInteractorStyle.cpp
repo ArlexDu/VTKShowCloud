@@ -9,6 +9,10 @@ nvtkPointPickerInteractorStyle::nvtkPointPickerInteractorStyle() {}
 
 nvtkPointPickerInteractorStyle::~nvtkPointPickerInteractorStyle() {}
 
+void nvtkPointPickerInteractorStyle::SetFileName(std::string filename){
+    this->FileName = filename;
+}
+
 void nvtkPointPickerInteractorStyle::OnLeftButtonDown() {
     // Pick from this location.
     int x = this->Interactor->GetEventPosition()[0];
@@ -25,22 +29,39 @@ void nvtkPointPickerInteractorStyle::OnLeftButtonDown() {
         int id = picker->GetPointId();
         vtkDataArray *line = picker->GetDataSet()->GetPointData()->GetArray("Indexs");
         int linecount = line->GetTuple1(id);
+//        获取指定行的信息
         char *data;
         data = this->GetInformation(linecount);
-        char *result[9];
-        this->Split(data, " ", result);
-        for (int i = 0; i < 9; i++) {
-            printf(" %s",result[i]);
+//        分割字符串
+        std::string result[9];
+        char* p;
+        p = strtok(data, " ");
+        std::string s(p);
+        result[0] = s;
+        int i = 1;
+        while (p != NULL) {
+            p = strtok(NULL, " ");
+            if (p == NULL) {
+                break;
+            }
+            std::string s(p);
+            result[i] = s;
+            i++;
         }
-    }
+        for (int i = 0; i < 9; i++) {
+            std::string item = result[i];
+//            std::cout<<item<<" ";
+            table->setItem(i, 1,  new QTableWidgetItem(QString(item.c_str())));
+        }
 
+    }
 
     vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
 char *nvtkPointPickerInteractorStyle::GetInformation(int linecount) {
     std::ifstream ifs;
-    ifs.open(FileName, std::ios_base::binary | std::ios_base::in);
+    ifs.open(FileName.c_str(), std::ios_base::binary | std::ios_base::in);
     if (!ifs.is_open()) {
         vtkErrorMacro (<< "Unable to open File for reading in binary mode");
     }
@@ -55,19 +76,4 @@ char *nvtkPointPickerInteractorStyle::GetInformation(int linecount) {
     }
     ifs.close();
     return line;
-}
-
-void nvtkPointPickerInteractorStyle::Split(char *sentence, char *delim, char *result[]) {
-    char *p;
-    p = strtok(sentence, delim);
-    result[0] = p;
-    int i = 1;
-    while (p != NULL) {
-        p = strtok(NULL, delim);
-        if (p == NULL) {
-            break;
-        }
-        result[i] = p;
-        i++;
-    }
 }

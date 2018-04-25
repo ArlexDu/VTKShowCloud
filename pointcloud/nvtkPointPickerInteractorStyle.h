@@ -15,8 +15,12 @@
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindow.h>
 #include <vtkProperty.h>
+#include <QTableWidget.h>
+#include <QString.h>
 
 #include <fstream>
+#include <iostream>
+#include <string>
 
 class nvtkPointPickerInteractorStyle : public vtkInteractorStyleTrackballCamera {
 
@@ -28,17 +32,18 @@ vtkTypeMacro(nvtkPointPickerInteractorStyle, vtkInteractorStyleTrackballCamera);
 
     void OnLeftButtonDown() override;
 
-    //  文件名称
-    vtkSetStringMacro(FileName);
+    QTableWidget *table;
 
-    vtkGetStringMacro(FileName);
+    //  文件名称
+    void SetFileName(std::string filename);
 
 protected:
     nvtkPointPickerInteractorStyle();
+
     ~nvtkPointPickerInteractorStyle();
+
 //    获取信息
-    char* GetInformation(int linecount);
-//    分割字符串
-    void Split(char* sentence, char* delim, char* result[]);
-    char* FileName;
+    char *GetInformation(int linecount);
+
+    std::string FileName;
 };
