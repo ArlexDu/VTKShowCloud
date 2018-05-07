@@ -19,13 +19,13 @@ void nvtkPointPickerInteractorStyle::OnLeftButtonDown() {
     int y = this->Interactor->GetEventPosition()[1];
     vtkSmartPointer<vtkPointPicker> picker =
             vtkSmartPointer<vtkPointPicker>::New();
+
     picker->Pick(x, y, 0, this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer());
     double *pos = picker->GetPickPosition();
-
 //    std::cout << "Pick position (world coordinates) is: "
 //              << pos[0] << " " << pos[1]
 //              << " " << pos[2] << std::endl;
-    if (picker->GetPointId() != NULL) {
+    if (picker->GetPointId() != -1) {
         int id = picker->GetPointId();
         vtkDataArray *line = picker->GetDataSet()->GetPointData()->GetArray("Indexs");
         int linecount = line->GetTuple1(id);
