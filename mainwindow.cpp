@@ -55,28 +55,30 @@ void MainWindow::openLas() {
     mapper->SelectColorArray("Colors");
 
     // Actor in scene
-    vtkNew<vtkActor> actor;
+    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
 
     // VTK Renderer
-    vtkNew<vtkRenderer> ren;
+    vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
 
-    // Add Actor to renderer
-    ren->AddActor(actor);
-    ren->SetBackground(0,0,0);
+    //如果已有点云的话，在原来的基础上增加点云
+    if(ui->Map->GetRenderWindow()== NULL){
+        // Add Actor to renderer
+        ren->AddActor(actor);
+        ren->SetBackground(0,0,0);
 
-    // VTK/Qt wedded
-    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    ui->Map->SetRenderWindow(renderWindow);
-    ui->Map->GetRenderWindow()->AddRenderer(ren);
+        // VTK/Qt wedded
+        vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+        ui->Map->SetRenderWindow(renderWindow);
+        ui->Map->GetRenderWindow()->AddRenderer(ren);
 //    增加交互
-    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
-    renderWindowInteractor->SetRenderWindow(renderWindow);
+        vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
+        renderWindowInteractor->SetRenderWindow(renderWindow);
 
-    vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
-    style->SetFileName(filepath);
-    style->table = ui->propertyTable;
-    renderWindowInteractor->SetInteractorStyle(style);
+        vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
+        style->SetFileName(filepath);
+        style->table = ui->propertyTable;
+        renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴
 //    vtkSmartPointer<vtkAxesActor> Axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -88,8 +90,12 @@ void MainWindow::openLas() {
 //    widget->SetEnabled(1);
 //    widget->InteractiveOn();
 
-    renderWindow->Render();
-    renderWindowInteractor->Start();
+        renderWindow->Render();
+        renderWindowInteractor->Start();
+    }else{
+        ren = ui->Map->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
+        ren->AddActor(actor);
+    }
 
     ui->Map->update();
 };
