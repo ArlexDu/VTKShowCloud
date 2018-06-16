@@ -1,3 +1,5 @@
+#include <QVTKOpenGLWidget.h>
+#include <QApplication>
 #include "mainwindow.h"
 extern int qInitResources_resources();
 

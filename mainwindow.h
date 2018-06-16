@@ -44,6 +44,8 @@
 #include "waveform/drawchartthread.h"
 #include "waveform/chartview.h"
 #include "pointcloud/nvtkDataSimplify.h"
+#include "waveform/listItem.h"
+#include "vtkBoxWidget.h"
 
 #include <iostream>
 #include <vector>
@@ -69,6 +71,7 @@ public:
 private slots:
     void slotExit();
     void openLas();
+    void showWidght();
     void on_actionMoveRight_triggered();
     void on_actionMoveLeft_triggered();
     void on_actionOceanStart_triggered();
@@ -78,6 +81,7 @@ public slots:
     void onDrawChanged(DrawData info);
 
 private:
+    vector<vtkBoxWidget*> boxs;
     Ui_MainWindow *ui;
 };
 

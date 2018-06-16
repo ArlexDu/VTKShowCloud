@@ -1,7 +1,13 @@
 #include <geos/platform.h>
+#include <QListWidgetItem>
+#include <cmake-build-debug/ui_mainwindow.h>
 #include "mainwindow.h"
+#include "pointcloud/nvtkMyCallBack.h"
+#include "waveform/listItem.h"
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
+using namespace boost;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -9,6 +15,7 @@ MainWindow::MainWindow() {
     this->ui = new Ui_MainWindow;
     this->ui->setupUi(this);
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openLas()));
+    connect(ui->actionMove, SIGNAL(triggered()), this, SLOT(showWidght()));
     //显示二维波形图部分
     chart = new Chart();
     chartView = new ChartView(chart->chart);
@@ -33,10 +40,27 @@ void MainWindow::slotExit() {
     qApp->exit();
 }
 
+
+void MainWindow::showWidght() {
+    for(int i =0; i < ui->filelist->count(); i++)//遍历所算的ITEM
+    {
+        QListWidgetItem *sel = ui->filelist->item(i);
+        listItem *item = dynamic_cast<listItem*>(ui->filelist->itemWidget(sel));
+        if(item->checkBox->isChecked()){
+            boxs[i]->On();
+        }else{
+            boxs[i]->Off();
+        }
+    }
+}
+
 //打开资源管理器选择文件
 void MainWindow::openLas() {
 //    选择文件
     QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las);;txt(*.txt)");
+    if(path.isEmpty()&& path.isNull()){
+        return;
+    }
     std::string filepath = path.toLocal8Bit().constData();
 //    string filepath = "/Users/arlex/Downloads/111.las";
 //    string filepath = "/Users/arlex/Documents/课程/激光点云/2015_12_15_07_31_01_117.txt";
@@ -75,10 +99,10 @@ void MainWindow::openLas() {
         vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
         renderWindowInteractor->SetRenderWindow(renderWindow);
 
-        vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
-        style->SetFileName(filepath);
-        style->table = ui->propertyTable;
-        renderWindowInteractor->SetInteractorStyle(style);
+//        vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
+//        style->SetFileName(filepath);
+//        style->table = ui->propertyTable;
+//        renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴
 //    vtkSmartPointer<vtkAxesActor> Axes = vtkSmartPointer<vtkAxesActor>::New();
@@ -91,12 +115,49 @@ void MainWindow::openLas() {
 //    widget->InteractiveOn();
 
         renderWindow->Render();
+        renderWindowInteractor->Initialize();
         renderWindowInteractor->Start();
     }else{
         ren = ui->Map->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
         ren->AddActor(actor);
     }
 
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
+    vtkBoxWidget *boxWidget = vtkBoxWidget::New();
+    boxWidget->SetInteractor(renderWindowInteractor);
+    boxWidget->SetPlaceFactor(1.25);
+
+    //
+    // Place the interactor initially. The input to a 3D widget is used to
+    // initially position and scale the widget. The EndInteractionEvent is
+    // observed which invokes the SelectPolygons callback.
+    //
+    boxWidget->SetProp3D(actor);
+    boxWidget->PlaceWidget();
+    nvtkMyCallBack *callback = nvtkMyCallBack::New();
+    boxWidget->AddObserver(vtkCommand::InteractionEvent, callback);
+    //
+    // Normally the user presses the "i" key to bring a 3D widget to life. Here
+    // we will manually enable it so it appears with the cone.
+    //
+//        boxWidget->On();
+    boxs.push_back(boxWidget);
+
+//  若打开了文件，则把该文件的名称展示在左边的view之中
+    listItem *item = new listItem(NULL);
+    vector<string> paths;
+    split(paths,filepath,is_any_of("/"));
+    string name = paths[paths.size()-1];
+    item->setFileName(name);
+//    cout<<filepath<<endl;
+    item->setActor(actor);
+    QListWidgetItem* pListWidgetItem = new QListWidgetItem();
+    QSize size = pListWidgetItem->sizeHint();
+    pListWidgetItem->setSizeHint(QSize(size.width(),30));
+//    ui->filelist->addItem(QString::fromLocal8Bit(name.c_str()));
+    ui->filelist->addItem(pListWidgetItem);
+    item->setSizeIncrement(size.width(),30);
+    ui->filelist->setItemWidget(pListWidgetItem,item);
     ui->Map->update();
 };
 
