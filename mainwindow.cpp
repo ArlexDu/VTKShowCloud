@@ -99,10 +99,10 @@ void MainWindow::openLas() {
         vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor = ui->Map->GetInteractor();
         renderWindowInteractor->SetRenderWindow(renderWindow);
 
-//        vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
-//        style->SetFileName(filepath);
-//        style->table = ui->propertyTable;
-//        renderWindowInteractor->SetInteractorStyle(style);
+        vtkSmartPointer<nvtkPointPickerInteractorStyle> style = vtkSmartPointer<nvtkPointPickerInteractorStyle>::New();
+        style->SetFileName(filepath);
+        style->table = ui->propertyTable;
+        renderWindowInteractor->SetInteractorStyle(style);
 
 //    设置方位轴
 //    vtkSmartPointer<vtkAxesActor> Axes = vtkSmartPointer<vtkAxesActor>::New();

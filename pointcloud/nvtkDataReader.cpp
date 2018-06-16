@@ -73,7 +73,7 @@ int nvtkDataReader::RequestData(vtkInformation * vtkNotUsed(request),
     if (strcmp(FileType, "las") == 0) {
         ReadLas(cloud);
     } else if (strcmp(FileType, "txt") == 0) {
-        ReadTxt(cloud);
+        ReadNormalTxt(cloud);
     } else {
         return VTK_ERROR;
     }
@@ -93,7 +93,8 @@ void nvtkDataReader::PrintSelf(ostream &os, vtkIndent indent) {
     os << "Filename: " << this->FileName << std::endl;
 }
 
-int nvtkDataReader::ReadTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+//读取有额外信息的txt文件
+int nvtkDataReader::ReadInfoTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     std::ifstream ifs;
     ifs.open(FileName, std::ios_base::binary | std::ios_base::in);
     if (!ifs.is_open()) {
@@ -129,6 +130,47 @@ int nvtkDataReader::ReadTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     return VTK_OK;
 }
 
+//读取普通的txt文件：只有x,y,z
+int nvtkDataReader::ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
+    std::ifstream ifs;
+    ifs.open(FileName, std::ios_base::binary | std::ios_base::in);
+    if (!ifs.is_open()) {
+        vtkErrorMacro (<< "Unable to open File for reading in binary mode");
+        return VTK_ERROR;
+    }
+    int count = 0;
+    char line[512];
+    while (!ifs.eof()) {
+        ifs.getline(line, 512, '\n');
+        count++;
+    }
+    printf("read number is %d \n", count + 1);
+    cloud->height = 1;
+    cloud->is_dense = false;
+    cloud->width = count + 1;
+    cloud->points.resize(cloud->width * cloud->height);
+    int i = 0;
+//    返回文件顶部
+    ifs.clear();
+    ifs.seekg(0);
+    while (!ifs.eof()) {
+        ifs.getline(line, 512, '\n');
+        char* result[3];
+        this->Split(line, ",",result);
+        if(result[0]==NULL||result[1]==NULL||result[2]==NULL){
+            cout<<"index is "<<i<<endl;
+            continue;
+        }
+        cloud->points[i].x = atof(result[0]);
+        cloud->points[i].y = atof(result[1]);
+        cloud->points[i].z = atof(result[2]);
+        i++;
+    }
+    ifs.close();
+    return VTK_OK;
+}
+
+//读取LAS文件
 int nvtkDataReader::ReadLas(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     std::ifstream ifs;
     ifs.open(FileName, std::ios_base::binary | std::ios_base::in);

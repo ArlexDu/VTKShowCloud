@@ -77,8 +77,11 @@ private:
     void operator=(const nvtkDataReader &);    // Not implemented
     char *FileType;
 
-//  读取txt文件并转化为pcd格式
-    int ReadTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+//  读取规定格式的txt文件并转化为pcd格式
+    int ReadInfoTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+
+//  读取x,y,z的txt文件并转化为pcd格式
+    int ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
 
 //  读取las文件并转化为pcd格式
     int ReadLas(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
