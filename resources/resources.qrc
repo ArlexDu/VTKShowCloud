@@ -8,5 +8,8 @@
         <file>images/jump.png</file>
         <file>images/pause.png</file>
         <file>images/play.png</file>
+        <file>images/operate.gif</file>
+        <file>images/save.gif</file>
+        <file>images/ICP.gif</file>
     </qresource>
 </RCC>

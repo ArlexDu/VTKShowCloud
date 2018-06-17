@@ -73,6 +73,7 @@ private slots:
     void openLas();
     void showWidght();
     void saveResult();
+    void ICP();
     void on_actionMoveRight_triggered();
     void on_actionMoveLeft_triggered();
     void on_actionOceanStart_triggered();

@@ -309,7 +309,7 @@ background-color: rgb(255, 255, 255);
    <addaction name="actionOpen"/>
    <addaction name="actionMove"/>
    <addaction name="actionSave"/>
-   <addaction name="actionMoveLeft"/>
+   <addaction name="actionICP"/>
    <addaction name="actionMoveRight"/>
    <addaction name="actionOpenOceanFile"/>
    <addaction name="actionOceanStart"/>
@@ -327,7 +327,7 @@ background-color: rgb(255, 255, 255);
   <action name="actionSave">
    <property name="icon">
     <iconset resource="Resources/resources.qrc">
-     <normaloff>:/images/images/rotate_right.png</normaloff>:/images/images/rotate_right.png</iconset>
+     <normaloff>:/images/images/save.gif</normaloff>:/images/images/rotate_right.png</iconset>
    </property>
    <property name="text">
     <string>actionRotateRight</string>
@@ -339,7 +339,7 @@ background-color: rgb(255, 255, 255);
   <action name="actionMove">
    <property name="icon">
     <iconset resource="Resources/resources.qrc">
-     <normaloff>:/images/images/rotate_left.png</normaloff>:/images/images/rotate_left.png</iconset>
+     <normaloff>:/images/images/operate.gif</normaloff>:/images/images/rotate_left.png</iconset>
    </property>
    <property name="text">
     <string>actionRotateLeft</string>
@@ -360,10 +360,10 @@ background-color: rgb(255, 255, 255);
     <string>MoveRight</string>
    </property>
   </action>
-  <action name="actionMoveLeft">
+  <action name="actionICP">
    <property name="icon">
     <iconset resource="Resources/resources.qrc">
-     <normaloff>:/images/images/left.png</normaloff>:/images/images/left.png</iconset>
+     <normaloff>:/images/images/ICP.gif</normaloff>:/images/images/left.png</iconset>
    </property>
    <property name="text">
     <string>actionMoveLeft</string>

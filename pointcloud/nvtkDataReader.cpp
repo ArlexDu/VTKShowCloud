@@ -156,7 +156,7 @@ int nvtkDataReader::ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     while (!ifs.eof()) {
         ifs.getline(line, 512, '\n');
         char* result[3];
-        this->Split(line, " ",result);
+        this->Split(line, ",",result);
         if(result[0]==NULL||result[1]==NULL||result[2]==NULL){
             cout<<"index is "<<i<<endl;
             continue;

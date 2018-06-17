@@ -7,6 +7,8 @@
 #include <boost/algorithm/string.hpp>
 #include <vtkSimplePointsWriter.h>
 #include <vtkTransformFilter.h>
+#include <vtkIterativeClosestPointTransform.h>
+#include <vtkLandmarkTransform.h>
 
 using namespace std;
 using namespace boost;
@@ -19,6 +21,7 @@ MainWindow::MainWindow() {
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openLas()));
     connect(ui->actionMove, SIGNAL(triggered()), this, SLOT(showWidght()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveResult()));
+    connect(ui->actionICP, SIGNAL(triggered()), this, SLOT(ICP()));
     //显示二维波形图部分
     chart = new Chart();
     chartView = new ChartView(chart->chart);
@@ -43,6 +46,34 @@ void MainWindow::slotExit() {
     qApp->exit();
 }
 
+void MainWindow::ICP(){
+    vtkSmartPointer<vtkActor> source;
+    vtkSmartPointer<vtkActor> target;
+    int n=0;
+    for(int i =0; i < ui->filelist->count(); i++)//遍历所算的ITEM
+    {
+        QListWidgetItem *sel = ui->filelist->item(i);
+        listItem *item = dynamic_cast<listItem*>(ui->filelist->itemWidget(sel));
+        if(item->checkBox->isChecked()){
+            if(n==0){
+                source = item->getActor();
+                n++;
+            }else{
+                target = item->getActor();
+            }
+        }
+    }
+    vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
+    icp->SetSource(source->GetMapper()->GetInput());
+    icp->SetTarget(target->GetMapper()->GetInput());
+    icp->GetLandmarkTransform()->SetModeToRigidBody();
+    icp->SetMaximumNumberOfIterations(15);
+    icp->Modified();
+    icp->Update();
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->SetMatrix(icp->GetMatrix());
+    target->SetUserTransform(transform);
+}
 
 //保存处理结果
 void MainWindow::saveResult() {
