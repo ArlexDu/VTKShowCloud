@@ -5,6 +5,8 @@
 #include "pointcloud/nvtkMyCallBack.h"
 #include "waveform/listItem.h"
 #include <boost/algorithm/string.hpp>
+#include <vtkSimplePointsWriter.h>
+#include <vtkTransformFilter.h>
 
 using namespace std;
 using namespace boost;
@@ -16,6 +18,7 @@ MainWindow::MainWindow() {
     this->ui->setupUi(this);
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openLas()));
     connect(ui->actionMove, SIGNAL(triggered()), this, SLOT(showWidght()));
+    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveResult()));
     //显示二维波形图部分
     chart = new Chart();
     chartView = new ChartView(chart->chart);
@@ -41,6 +44,32 @@ void MainWindow::slotExit() {
 }
 
 
+//保存处理结果
+void MainWindow::saveResult() {
+    for(int i =0; i < ui->filelist->count(); i++)//遍历所算的ITEM
+    {
+        QListWidgetItem *sel = ui->filelist->item(i);
+        listItem *item = dynamic_cast<listItem*>(ui->filelist->itemWidget(sel));
+//        int number = item->getActor()->GetMapper()->GetInput()->GetNumberOfPoints();
+//      更新原始数据的坐标
+        vtkTransform *t = vtkTransform::New();
+        t->SetMatrix(item->getActor()->GetMatrix());
+        vtkTransformFilter *tf = vtkTransformFilter::New();
+        tf->SetTransform(t);
+        tf->SetInputDataObject(item->getActor()->GetMapper()->GetInput());
+        tf->Update();
+//      写入新的文件
+        vtkSmartPointer<vtkSimplePointsWriter> writer =
+                vtkSmartPointer<vtkSimplePointsWriter>::New();
+        string filename = "cloud";
+        filename = filename+to_string(i)+".txt";
+        writer->SetFileName(filename.c_str());
+        writer->SetInputConnection(tf->GetOutputPort());
+        writer->Write();
+    }
+}
+
+//展示每个cloud的widget
 void MainWindow::showWidght() {
     for(int i =0; i < ui->filelist->count(); i++)//遍历所算的ITEM
     {
@@ -159,6 +188,9 @@ void MainWindow::openLas() {
     item->setSizeIncrement(size.width(),30);
     ui->filelist->setItemWidget(pListWidgetItem,item);
     ui->Map->update();
+//    double p[3];
+//    actor->GetMapper()->GetInput()->GetPoint(1,p);
+//    cout<<p[0]<<" "<<p[1]<<" "<<p[2]<<endl;
 };
 
 void MainWindow::onDrawChanged(DrawData info) {

@@ -4,6 +4,8 @@
 #include <pcl/filters/radius_outlier_removal.h>
 #include "vtkObjectFactory.h"
 
+using namespace std;
+
 class nvtkDataObject : public vtkDataObject
 {
 

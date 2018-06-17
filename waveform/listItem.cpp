@@ -9,7 +9,7 @@ listItem::listItem(QWidget *parent):QWidget(parent) {
     checkBox->setGeometry(5,0,30,30);
 
     text = new QPlainTextEdit(this);
-    text->setGeometry(40,0,70,30);
+    text->setGeometry(40,0,100,30);
     text->setDisabled(true);
 }
 
