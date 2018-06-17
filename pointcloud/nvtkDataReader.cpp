@@ -164,6 +164,7 @@ int nvtkDataReader::ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
         cloud->points[i].x = atof(result[0]);
         cloud->points[i].y = atof(result[1]);
         cloud->points[i].z = atof(result[2]);
+        cloud->points[i].data[3] = i;
         i++;
     }
     ifs.close();
