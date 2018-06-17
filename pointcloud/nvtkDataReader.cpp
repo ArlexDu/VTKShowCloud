@@ -119,7 +119,7 @@ int nvtkDataReader::ReadInfoTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     while (!ifs.eof()) {
         ifs.getline(line, 512, '\n');
         char* result[10];
-        this->Split(line, " ",result);
+        this->Split(line, &Separater,result);
         cloud->points[i].x = atof(result[1]);
         cloud->points[i].y = atof(result[2]);
         cloud->points[i].z = atof(result[3]);
@@ -144,7 +144,7 @@ int nvtkDataReader::ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
         ifs.getline(line, 512, '\n');
         count++;
     }
-    printf("read number is %d \n", count + 1);
+//    cout<<"separater is "<<*Separater<<endl;
     cloud->height = 1;
     cloud->is_dense = false;
     cloud->width = count + 1;
@@ -156,7 +156,7 @@ int nvtkDataReader::ReadNormalTxt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
     while (!ifs.eof()) {
         ifs.getline(line, 512, '\n');
         char* result[3];
-        this->Split(line, ",",result);
+        this->Split(line, &Separater ,result);
         if(result[0]==NULL||result[1]==NULL||result[2]==NULL){
             cout<<"index is "<<i<<endl;
             continue;

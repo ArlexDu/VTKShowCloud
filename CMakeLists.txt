@@ -42,7 +42,7 @@ aux_source_directory(./pointcloud cloudSrcs)
 
 aux_source_directory(./waveform waveSrcs)
 
-set(Srcs main.cpp mainwindow.h mainwindow.cpp ${cloudSrcs} ${waveSrcs} pointcloud/nvtkMyCallBack.h)
+set(Srcs main.cpp mainwindow.h mainwindow.cpp ${cloudSrcs} ${waveSrcs} pointcloud/nvtkMyCallBack.h waveform/DivideDialog.cpp waveform/DivideDialog.h)
 
 set(MOC_Hdrs mainwindow.h waveform/listItem.h)
 

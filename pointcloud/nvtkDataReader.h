@@ -48,6 +48,10 @@ vtkTypeMacro(nvtkDataReader, vtkDataObjectAlgorithm)
 
     vtkGetStringMacro(FileName)
 
+    //  分隔符
+    vtkSetMacro(Separater,char)
+
+
 //  LAS Header
     vtkGetMacro(Header, liblas::Header *)
 
@@ -71,6 +75,7 @@ protected:
     int pointRecordsCount;
     liblas::Header *Header;
     char *FileName;
+    char Separater;
 
 private:
     nvtkDataReader(const nvtkDataReader &);  // Not implemented

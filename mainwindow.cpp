@@ -9,6 +9,8 @@
 #include <vtkTransformFilter.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkLandmarkTransform.h>
+#include <string>
+#include "waveform/DivideDialog.h"
 
 using namespace std;
 using namespace boost;
@@ -63,6 +65,15 @@ void MainWindow::ICP(){
             }
         }
     }
+    if(n!=1){
+        if (QMessageBox::Yes == QMessageBox::warning(this,
+                                                      tr("警告"),
+                                                      tr("ICP算法需要选中两片点云！"),
+                                                      QMessageBox::Yes,
+                                                      QMessageBox::Yes)) {
+            return;
+        }
+    }
     vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
     icp->SetSource(source->GetMapper()->GetInput());
     icp->SetTarget(target->GetMapper()->GetInput());
@@ -72,7 +83,7 @@ void MainWindow::ICP(){
     icp->Update();
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->SetMatrix(icp->GetMatrix());
-    target->SetUserTransform(transform);
+    source->SetUserTransform(transform);
 }
 
 //保存处理结果
@@ -117,15 +128,24 @@ void MainWindow::showWidght() {
 //打开资源管理器选择文件
 void MainWindow::openLas() {
 //    选择文件
-    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","las(*.las);;txt(*.txt)");
+    QString path=QFileDialog::getOpenFileName(this,"选择文件",".","txt(*.txt);;las(*.las)");
     if(path.isEmpty()&& path.isNull()){
         return;
     }
     std::string filepath = path.toLocal8Bit().constData();
+//  若是txt文件则选择分割符
+    char separater=',';
+    if(filepath.find(".txt")!=string::npos){
+        DivideDialog dialog;
+        dialog.exec();
+        separater=dialog.result();
+    }
 //    string filepath = "/Users/arlex/Downloads/111.las";
 //    string filepath = "/Users/arlex/Documents/课程/激光点云/2015_12_15_07_31_01_117.txt";
+//    cout<<"separater is "<<separater<<endl;
     vtkSmartPointer<nvtkDataReader> reader = vtkSmartPointer<nvtkDataReader>::New();
     reader->SetFileName(filepath.c_str());
+    reader->SetSeparater(separater);
 
     vtkSmartPointer<nvtkDataSimplify> processing = vtkSmartPointer<nvtkDataSimplify>::New();
     processing->SetInputConnection(reader->GetOutputPort());
@@ -232,14 +252,6 @@ void MainWindow::onDrawChanged(DrawData info) {
 
 }
 
-
-void MainWindow::on_actionMoveRight_triggered() {
-//    qDebug()<< chart->filename;
-}
-
-void MainWindow::on_actionMoveLeft_triggered() {
-
-}
 
 void MainWindow::on_actionOceanStart_triggered() {
 
